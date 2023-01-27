@@ -79,12 +79,12 @@ def get_number():
     return abs(numberplate)
 
 
-def write_tasks(file_path):
+def write_tasks(file_path, tasks_list):
     string_list = list()
-    for task in tasks:
+    for task in tasks_list:
         string_task = __task__.Task.get_string_for_file(task)
         string_list.append(string_task)
-        __file_utils__.write_file(file_path, string_list)
+    __file_utils__.write_file(file_path, string_list)
 
 
 def run_precondition():
@@ -204,12 +204,11 @@ def run():
                             new_date = get_correct_data()
                             task = delete_tasks[user_choice_id]
                             task.set_local_data_time(new_date)
-                            temp = delete_tasks.pop(user_choice_id)
-                            tasks.append(temp)
-                            write_tasks(delete_path)
-                            write_tasks(tasks_path)
+                            tasks.append(delete_tasks.pop(user_choice_id))
+                            write_tasks(delete_path, delete_tasks)
+                            write_tasks(tasks_path, tasks)
                             print("You have successfully changed Date:\n")
-                            show_tasks_by_id(delete_tasks[len(tasks)] - 1)
+                            show_tasks_by_id(tasks)
                         elif user_choice == 0:
                             user_choice = 0
                         else:
