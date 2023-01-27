@@ -20,10 +20,14 @@ def read_file(file_path):
         file_list = list()
         lines = file.readlines()
         for line in lines:
-            file_list.append(line)
+            if line != "\n":
+                file_list.append(line)
+            else:
+                continue
     return file_list
 
 
 def write_file(file_path, string_list):
-    with open(file_path, "a") as file:
-        file.writelines(line + "\n" for line in string_list)
+    with open(file_path, "w") as file:
+        for line in string_list:
+            file.write(f'{line}\n')
