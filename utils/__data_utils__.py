@@ -6,11 +6,14 @@ def get_string_format(data_object):
 
 
 def get_local_data_time(data_time):
-    try:
-        data_object = datetime.strptime(data_time, DataUtils.format)
-        return data_object
-    except ValueError as e:
-        print('This line has a problem:', e)
+    while True:
+        try:
+            data_object = datetime.strptime(data_time, DataUtils.format)
+            break
+        except ValueError as e:
+            print('This line has a problem:', e)
+        data_time = input()
+    return data_object
 
 
 class DataUtils:
