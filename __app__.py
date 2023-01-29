@@ -311,8 +311,12 @@ def run():
                                 data_from < task_data < data_to)
                         if is_time_range:
                             tasks_to_delete.append(task)
-                    for task in tasks_to_delete:
-                        delete_menu.append(task)
+                    if len(tasks_to_delete) != 0:
+                        for task in tasks_to_delete:
+                            delete_tasks.append(task)
+                            tasks.remove(task)
+                    else:
+                        print("Tasks from period not found")
                     write_tasks(delete_path, delete_tasks)
                     write_tasks(tasks_path, tasks)
                     print("You have successfully deleted tasks")
