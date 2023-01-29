@@ -1,43 +1,39 @@
-import __task__
-import __task_creator__
+from __task__ import get_task_from_string, Task
+from __task_creator__ import add_task_by_pattern, add_task_by_steps
 from __init__ import tasks_path, delete_path, tasks, delete_tasks
-from utils import __file_utils__, __data_utils__
-from utils.__data_utils__ import DataUtils
-from utils.__file_utils__ import create_if_not_exists, read_file
+from utils.__data_utils__ import DataUtils, get_local_data_time
+from utils.__file_utils__ import create_if_not_exists, read_file, write_file
 
 create_if_not_exists(tasks_path)
 create_if_not_exists(delete_path)
 for line in read_file(tasks_path):
     if line != 0:
-        tasks.append(__task__.get_task_from_string(line))
+        tasks.append(get_task_from_string(line))
 for line in read_file(delete_path):
     if line != 0:
-        delete_tasks.append(__task__.get_task_from_string(line))
+        delete_tasks.append(get_task_from_string(line))
 
 
 def show_task(tasks_list):
     temp = list()
     temp.append(tasks_list)
     for task in temp:
-        print(__task__.Task.to_string(task))
+        print(Task.to_string(task))
 
 
 def show_tasks_by_id(tasks_list):
     i = 0
     while i < len(tasks_list):
-        print(f"Id:{i}", __task__.Task.to_string(tasks_list[i]))
+        print(f"Id:{i}", Task.to_string(tasks_list[i]))
         i += 1
 
 
 def get_correct_data():
     data = input()
-    while True:
-        try:
-            local_data_time = __data_utils__.get_local_data_time(data)
-            break
-        except ValueError as e:
-            print("Incorrect format of data. Please try again. Correct format: " + DataUtils.format)
-        data = input()
+    try:
+        local_data_time = get_local_data_time(data)
+    except ValueError as e:
+        print(e)
     return local_data_time
 
 
@@ -82,9 +78,9 @@ def get_number():
 def write_tasks(file_path, tasks_list):
     string_list = list()
     for task in tasks_list:
-        string_task = __task__.Task.get_string_for_file(task)
+        string_task = Task.get_string_for_file(task)
         string_list.append(string_task)
-    __file_utils__.write_file(file_path, string_list)
+    write_file(file_path, string_list)
 
 
 def run_precondition():
@@ -109,23 +105,23 @@ def run():
                 user_choice = get_user_choice(max_choice=2)
                 # Add task by steps menu
                 if user_choice == 1:
-                    task = __task_creator__.add_task_by_steps()
+                    task = add_task_by_steps()
                     if task != 0:
                         tasks.append(task)
-                        write_tasks(tasks_path)
+                        write_tasks(tasks_path, tasks)
                         print("Tasks created successfully")
-                        print(__task__.Task.to_string(tasks[len(tasks) - 1]))
+                        print(Task.to_string(tasks[len(tasks) - 1]))
                         by_step_menu = ["Choose from the menus bellow", "Add task", "Main Menu"]
                         out_put_menu(by_step_menu)
                         user_choice = get_user_choice(max_choice=1)
                 # Add task by pattern
                 elif user_choice == 2:
-                    task = __task_creator__.add_task_by_pattern()
+                    task = add_task_by_pattern()
                     if task != 0:
                         tasks.append(task)
-                        write_tasks(tasks_path)
+                        write_tasks(tasks_path, tasks)
                         print("Tasks created successfully")
-                        print(__task__.Task.to_string(tasks[len(tasks) - 1]))
+                        print(Task.to_string(tasks[len(tasks) - 1]))
                         by_step_menu = ["Choose from the menus bellow", "Add task", "Main Menu"]
                         out_put_menu(by_step_menu)
                         user_choice = get_user_choice(max_choice=1)
@@ -161,7 +157,7 @@ def run():
                             task = tasks[user_choice_id]
                             task.set_title(new_title)
                             show_tasks_by_id(tasks)
-                            write_tasks(tasks_path)
+                            write_tasks(tasks_path, tasks)
                             print("You have successfully changed Title:\n")
                         # Edit data
                         elif user_choice == 2:
@@ -170,7 +166,7 @@ def run():
                             task = tasks[user_choice_id]
                             task.set_local_data_time(new_date)
                             show_tasks_by_id(tasks)
-                            write_tasks(tasks_path)
+                            write_tasks(tasks_path, tasks)
                             print("You have successfully changed Date:\n")
                         # Edit description
                         elif user_choice == 3:
@@ -179,7 +175,7 @@ def run():
                             task = tasks[user_choice_id]
                             task.set_description(new_description)
                             show_tasks_by_id(tasks)
-                            write_tasks(tasks_path)
+                            write_tasks(tasks_path, tasks)
                             print("You have successfully changed Description:\n")
                         elif user_choice == 0:
                             user_choice = 0
@@ -217,6 +213,8 @@ def run():
                 # Back menu
                 elif user_choice == 0:
                     user_choice = 0
+                else:
+                    print("Please make correct choice")
             user_choice = -1
         # Showing tasks
         elif user_choice == 3:
@@ -248,7 +246,10 @@ def run():
                                 data_from < task_data < data_to)
                         if is_time_range:
                             temp.append(task)
-                    show_tasks_by_id(temp)
+                    if len(temp) != 0:
+                        show_tasks_by_id(temp)
+                    else:
+                        print("Tasks from period not found")
                     menu = ["Choose from the menus bellow", "Show Task", "Main Menu"]
                     out_put_menu(menu)
                     user_choice = get_user_choice(max_choice=1)
@@ -268,10 +269,10 @@ def run():
             user_choice = -1
         # Delete menu
         elif user_choice == 4:
-            delete_menu = ["DELETE TASK", "By Id", "By period", "Back"]
-            out_put_menu(delete_menu)
-            user_choice = get_user_choice(max_choice=2)
             while user_choice != 0:
+                delete_menu = ["DELETE TASK", "By Id", "By period", "Back"]
+                out_put_menu(delete_menu)
+                user_choice = get_user_choice(max_choice=2)
                 # Delete by Id
                 if user_choice == 1:
                     by_id_menu = ["BY ID", "Back"]
@@ -283,10 +284,10 @@ def run():
                     temp.append(tasks[id_task])
                     show_tasks_by_id(temp)
                     delete_tasks.append(tasks.pop(id_task))
-                    write_tasks(delete_path)
-                    write_tasks(tasks_path)
+                    write_tasks(delete_path, delete_tasks)
+                    write_tasks(tasks_path, tasks)
                     print("You have successfully deleted task")
-                    menu = ["Choose from the menus bellow", "Menu Delete", "Main Menu"]
+                    menu = ["Choose from the menus bellow", "Delete task", "Back"]
                     out_put_menu(menu)
                     get_user_choice(max_choice=1)
                 # Delete by period
@@ -295,7 +296,7 @@ def run():
                     out_put_menu(by_period_menu)
                     show_tasks_by_id(tasks)
                     print("Input period")
-                    print("Format of data: " + __data_utils__.DataUtils.format)
+                    print("Format of data: " + DataUtils.format)
                     print("From: ")
                     data_from = get_correct_data()
                     print("To: ")
@@ -309,22 +310,24 @@ def run():
                             tasks_to_delete.append(task)
                     for task in tasks_to_delete:
                         delete_menu.append(task)
-                    write_tasks(delete_path)
-                    write_tasks(tasks_path)
+                    write_tasks(delete_path, delete_tasks)
+                    write_tasks(tasks_path, tasks)
                     print("You have successfully deleted tasks")
-                    menu = ["Choose from the menus bellow", "Menu Delete", "Main Menu"]
+                    menu = ["Choose from the menus bellow", "Delete task", "Back"]
                     out_put_menu(menu)
                     user_choice = get_user_choice(max_choice=1)
-                # Cancel
+                # Back
                 elif user_choice == 0:
                     user_choice = 0
-
+                else:
+                    print("Please make your choice")
             user_choice = -1
-
+        # To Main menu
         elif user_choice == 0:
             user_choice = 0
         else:
             print("Please make correct choice")
+    user_choice = -1
 
 
 def get_input_string():
@@ -334,6 +337,3 @@ def get_input_string():
             print("Parameter can not be empty. Please try again")
         else:
             return input_text
-
-
-
