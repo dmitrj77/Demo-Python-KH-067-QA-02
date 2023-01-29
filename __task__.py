@@ -1,10 +1,11 @@
+import __app__
 from utils import __data_utils__
 
 
 def get_task_from_string(pattern):
     message = pattern.split(";")
     title = message[0]
-    local_date_time = __data_utils__.get_local_data_time(message[1])
+    local_date_time = __app__.get_local_data_time(message[1])
     description = message[2]
     return Task(title, local_date_time, description)
 
