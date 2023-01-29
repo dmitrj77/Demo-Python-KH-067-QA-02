@@ -3,6 +3,7 @@ from __task_creator__ import add_task_by_pattern, add_task_by_steps
 from __init__ import tasks_path, delete_path, tasks, delete_tasks
 from utils.__data_utils__ import DataUtils, get_local_data_time
 from utils.__file_utils__ import create_if_not_exists, read_file, write_file
+from datetime import datetime
 
 create_if_not_exists(tasks_path)
 create_if_not_exists(delete_path)
@@ -28,13 +29,15 @@ def show_tasks_by_id(tasks_list):
         i += 1
 
 
-def get_correct_data():
-    data = input()
-    try:
-        local_data_time = get_local_data_time(data)
-    except ValueError as e:
-        print(e)
-    return local_data_time
+def get_compare_data(date):
+    data_now = datetime.now()
+    while True:
+        local_data_time = get_local_data_time(date)
+        if local_data_time >= data_now:
+            return local_data_time
+        else:
+            print("Data is previous that now")
+            date = input()
 
 
 def out_put_menu(menu):
@@ -162,7 +165,7 @@ def run():
                         # Edit data
                         elif user_choice == 2:
                             print("Please enter new Date in format " + DataUtils.format)
-                            new_date = get_correct_data()
+                            new_date = get_compare_data(input())
                             task = tasks[user_choice_id]
                             task.set_local_data_time(new_date)
                             show_tasks_by_id(tasks)
@@ -197,7 +200,7 @@ def run():
                         # Change of data
                         if user_choice == 1:
                             print("Please enter new Date in format " + DataUtils.format)
-                            new_date = get_correct_data()
+                            new_date = get_compare_data(input())
                             task = delete_tasks[user_choice_id]
                             task.set_local_data_time(new_date)
                             tasks.append(delete_tasks.pop(user_choice_id))
@@ -237,9 +240,9 @@ def run():
                     temp = list()
                     print("Format of data: " + DataUtils.format)
                     print("From: ")
-                    data_from = get_correct_data()
+                    data_from = get_local_data_time(input())
                     print("To: ")
-                    data_to = get_correct_data()
+                    data_to = get_local_data_time(input())
                     for task in tasks:
                         task_data = task.get_local_data()
                         is_time_range = task_data == data_from or task_data == data_to or (
@@ -298,9 +301,9 @@ def run():
                     print("Input period")
                     print("Format of data: " + DataUtils.format)
                     print("From: ")
-                    data_from = get_correct_data()
+                    data_from = get_local_data_time(input())
                     print("To: ")
-                    data_to = get_correct_data()
+                    data_to = get_local_data_time(input())
                     tasks_to_delete = list()
                     for task in tasks:
                         task_data = task.get_local_data()
