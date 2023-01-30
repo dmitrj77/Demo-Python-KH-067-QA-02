@@ -191,28 +191,28 @@ def run():
                         print("Archive is empty!")
                     else:
                         show_tasks_by_id(delete_tasks)
-                    print("Please enter Id: ")
-                    user_choice_id = get_user_choice(len(delete_tasks) - 1)
-                    while user_choice != 0:
-                        bin_menu = ["RECYCLE BIN", "Data", "Back"]
-                        out_put_menu(bin_menu)
-                        user_choice = get_user_choice(max_choice=1)
-                        # Change of data
-                        if user_choice == 1:
-                            print("Please enter new Date in format " + DataUtils.format)
-                            new_date = get_compare_data(input())
-                            task = delete_tasks[user_choice_id]
-                            task.set_local_data_time(new_date)
-                            tasks.append(delete_tasks.pop(user_choice_id))
-                            write_tasks(delete_path, delete_tasks)
-                            write_tasks(tasks_path, tasks)
-                            print("You have successfully changed Date:\n")
-                            show_tasks_by_id(tasks)
-                        elif user_choice == 0:
-                            user_choice = 0
-                        else:
-                            print("Please make your choice")
-                    user_choice = -1
+                        print("Please enter Id: ")
+                        user_choice_id = get_user_choice(len(delete_tasks) - 1)
+                        while user_choice != 0:
+                            bin_menu = ["RECYCLE BIN", "Data", "Back"]
+                            out_put_menu(bin_menu)
+                            user_choice = get_user_choice(max_choice=1)
+                            # Change of data
+                            if user_choice == 1:
+                                print("Please enter new Date in format " + DataUtils.format)
+                                new_date = get_compare_data(input())
+                                task = delete_tasks[user_choice_id]
+                                task.set_local_data_time(new_date)
+                                tasks.append(delete_tasks.pop(user_choice_id))
+                                write_tasks(delete_path, delete_tasks)
+                                write_tasks(tasks_path, tasks)
+                                print("You have successfully changed Date:\n")
+                                show_tasks_by_id(tasks)
+                            elif user_choice == 0:
+                                user_choice = 0
+                            else:
+                                print("Please make your choice")
+                        user_choice = -1
                 # Back menu
                 elif user_choice == 0:
                     user_choice = 0
