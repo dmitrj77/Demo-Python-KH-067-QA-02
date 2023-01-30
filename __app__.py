@@ -1,11 +1,37 @@
 import __task__
 import __task_creator__
-from __init__ import tasks_path, delete_path, tasks, delete
-from utils import __file_utils__
+from __init__ import tasks_path, delete_path, tasks, delete_tasks
+from utils import __file_utils__, __data_utils__
+from utils.__data_utils__ import DataUtils
 from utils.__file_utils__ import create_if_not_exists, read_file, FileUtils
 
+create_if_not_exists(tasks_path)
+create_if_not_exists(delete_path)
+for line in read_file(tasks_path):
+    if line != 0:
+        tasks.append(__task__.get_task_from_string(line))
+for line in read_file(delete_path):
+    if line != 0:
+        delete_tasks.append(__task__.get_task_from_string(line))
 
-def out_put_menu(menu):
+
+def show_task(tasks_list):
+    temp = list()
+    temp.append(tasks_list)
+    for task in temp:
+        print(__task__.Task.to_string(task))
+
+
+def show_task_by_id(tasks_list):
+    i = 0
+    while i < len(tasks_list):
+        print(f"ID: {i}", __task__.Task.to_string(tasks_list[i]))
+        i += 1
+
+
+def et_correct_data():
+
+    def out_put_menu(menu):
     list_menu = list(menu)
     i = 0
     while i < len(list_menu):
@@ -41,6 +67,9 @@ def get_number():
     return abs(numberplate)
 
 
+
+
+
 def write_tasks(file_path):
     string_list = list()
     for task in tasks:
@@ -49,19 +78,27 @@ def write_tasks(file_path):
         __file_utils__.write_file(file_path, string_list)
 
 
-def run_precondition():
-    create_if_not_exists(tasks_path)
-    create_if_not_exists(delete_path)
-    read_file(tasks_path)
-    read_file(delete_path)
+def get_correct_data():
+    data = input()
+    while True:
+        try:
+            local_data_time = __data_utils__.get_local_data_time(data)
+            break
+        except ValueError as e:
+            print("Incorrect format of data. Please try again. Correct format: " + DataUtils.format)
 
-    for task_string in __file_utils__.read_file(tasks):
-        task = __task__.Task(task_string)
+        data = input()
+    return local_data_time
+
+
+def run_precondition():
+    for task_string in __file_utils__.read_file(tasks_path):
+        task = __task__.get_task_from_string(task_string)
         tasks.append(task)
 
-    for taskString in __file_utils__.read_file(delete):
-        task = __task__.Task(taskString)
-        delete.append(task)
+    for task_string in __file_utils__.read_file(delete_path):
+        task = __task__.get_task_from_string(task_string)
+        delete_tasks.append(task)
 
     print("[Organizer] is designed to schedule user's activity. "
           + "It was created by KH-JAVA-067-QA-01 team."
@@ -114,6 +151,30 @@ def run():
 
         # Edit task menu
         elif user_choice == 2:
+            while user_choice != 0:
+                edit_menu = ["EDIT TASK", "Existing ", "Restore task", "Back"]
+                out_put_menu(edit_menu)
+                user_choice = get_user_choice(max_choice=2)
+                # Existing task menu
+                if user_choice == 1:
+                    show_task(tasks)
+                    print("Please enter Id: ")
+                    user_choice_id = get_user_choice(len(tasks) - 1)
+                    while user_choice != 0:
+                        print(task[user_choice_id])
+                        edit_task = ["EXISTING", "Title ", "Date", "Description", "Back"]
+                        out_put_menu(edit_task)
+                        user_choice = get_user_choice(max_choice=3)
+                        if user_choice == 1:
+                            print("Please enter new Title: ")
+                            new_title = get_input_string()
+                            task[user_choice_id].__task__.set_title(new_title)
+                            print("Please enter new Title: ")
+                        elif user_choice == 2:
+                            print("Please enter new Date in format " + DataUtils.format)
+                            new_date = get_correct_data()
+                            tasks[user_choice_id].__task__.set_local_data_time(new_date)
+                            print("You have successfully changed Date:\n")
 
             pass
 
